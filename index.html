@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Джек-потрошитель — Уайтчепел, 1888</title>
+  <style>
+    :root {
+      --bg: #0b0b0d;
+      --panel: #151417;
+      --panel-2: #1d1c21;
+      --text: #d8d2c6;
+      --muted: #8d877c;
+      --accent: #a3141b;
+      --accent-2: #d4a017;
+      --border: #2c2a30;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent-2); text-decoration: none; }
+
+    h1, h2, h3 { font-weight: normal; letter-spacing: 1px; }
+
+    /* ---------- Навигация ---------- */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 6%;
+      background: rgba(11, 11, 13, 0.85);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { color: var(--accent); font-size: 1.1rem; letter-spacing: 2px; }
+    nav ul { display: flex; gap: 22px; list-style: none; flex-wrap: wrap; }
+    nav a { color: var(--muted); font-size: 0.95rem; transition: color .2s; }
+    nav a:hover { color: var(--accent-2); }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 20px 80px;
+      position: relative;
+      background:
+        radial-gradient(ellipse at 50% 120%, rgba(163, 20, 27, 0.35), transparent 60%),
+        linear-gradient(180deg, #050506 0%, #121116 100%);
+      overflow: hidden;
+    }
+    .fog {
+      position: absolute;
+      left: -50%; width: 200%; height: 220px;
+      background: radial-gradient(ellipse, rgba(200,200,210,0.09), transparent 70%);
+      animation: drift 28s linear infinite;
+      pointer-events: none;
+    }
+    .fog.f1 { top: 30%; }
+    .fog.f2 { top: 60%; animation-duration: 40s; animation-direction: reverse; }
+    @keyframes drift {
+      from { transform: translateX(0); }
+      to { transform: translateX(25%); }
+    }
+    .hero .kicker {
+      color: var(--muted);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-size: clamp(2.6rem, 8vw, 5.5rem);
+      color: #f1ebe0;
+      text-shadow: 0 0 30px rgba(163,20,27,0.5);
+      line-height: 1.1;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p.lead {
+      max-width: 620px;
+      margin: 24px auto 36px;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+    .btn {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 12px 28px;
+      background: transparent;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      transition: all .25s;
+    }
+    .btn:hover { background: var(--accent); color: #fff; }
+    .btn.gold { border-color: var(--accent-2); }
+    .btn.gold:hover { background: var(--accent-2); color: #111; }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 26px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: .3; } 50% { opacity: 1; } }
+
+    /* ---------- Общие секции ---------- */
+    section { padding: 100px 6%; }
+    section:nth-of-type(even) { background: var(--panel); }
+    .section-title { text-align: center; margin-bottom: 14px; font-size: clamp(1.8rem, 4vw, 2.6rem); color: #f1ebe0; }
+    .section-sub { text-align: center; color: var(--muted); max-width: 680px; margin: 0 auto 50px; }
+    .divider {
+      width: 80px; height: 2px; background: var(--accent);
+      margin: 0 auto 20px;
+    }
+
+    /* ---------- Введение ---------- */
+    .intro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .stat {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 30px 24px;
+      text-align: center;
+    }
+    .stat .num { font-size: 2.6rem; color: var(--accent); display: block; }
+    .stat .label { color: var(--muted); font-size: 0.95rem; }
+
+    .prose {
+      max-width: 820px;
+      margin: 50px auto 0;
+      font-size: 1.08rem;
+      color: #bfb8ab;
+    }
+    .prose p + p { margin-top: 16px; }
+    .prose .drop::first-letter {
+      float: left;
+      font-size: 4rem;
+      line-height: 0.9;
+      padding: 6px 10px 0 0;
+      color: var(--accent);
+    }
+
+    /* ---------- Таймлайн ---------- */
+    .timeline-tabs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .tab {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { border-color: var(--accent); color: #fff; background: rgba(163,20,27,0.2); }
+
+    .timeline-card {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--panel-2);
+      border-left: 4px solid var(--accent);
+      padding: 34px 36px;
+      min-height: 230px;
+      animation: fadeIn .5s ease;
+    }
+    .timeline-card .date { color: var(--accent-2); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; }
+    .timeline-card h3 { font-size: 1.6rem; margin: 8px 0 14px; color: #f1ebe0; }
+    .timeline-card p { color: #bfb8ab; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* ---------- Жертвы ---------- */
+    .victims-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .victim {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 26px;
+      cursor: pointer;
+      transition: transform .25s, border-color .25s;
+      position: relative;
+    }
+    .victim:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .victim .initials {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+    .victim h3 { font-size: 1.3rem; color: #f1ebe0; }
+    .victim .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 10px; }
+    .victim .details {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      color: #bfb8ab;
+      font-size: 0.95rem;
+    }
+    .victim.open .details { display: block; animation: fadeIn .4s ease; }
+    .victim .hint { color: var(--accent-2); font-size: 0.8rem; letter-spacing: 1px; }
+
+    /* ---------- Карта ---------- */
+    .map-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      background: #0f0f12;
+      border: 1px solid var(--border);
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+    }
+    .map-wrap svg { width: 100%; height: 100%; }
+    .pin {
+      cursor: pointer;
+      transition: r .2s;
+    }
+    .pin circle.core { fill: var(--accent); }
+    .pin circle.ring {
+      fill: none; stroke: var(--accent); stroke-width: 1.5;
+      animation: ping 2s ease-out infinite;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+    .pin:hover circle.core { fill: var(--accent-2); }
+    @keyframes ping {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+    .map-info {
+      max-width: 900px;
+      margin: 20px auto 0;
+      min-height: 80px;
+      text-align: center;
+      color: #bfb8ab;
+      border: 1px solid var(--border);
+      padding: 18px;
+      background: var(--panel-2);
+    }
+    .map-info strong { color: var(--accent-2); }
+
+    /* ---------- Подозреваемые ---------- */
+    .suspects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 22px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .suspect {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 26px;
+      position: relative;
+      overflow: hidden;
+    }
+    .suspect h3 { font-size: 1.25rem; color: #f1ebe0; margin-bottom: 4px; }
+    .suspect .role { color: var(--muted); font-size: 0.88rem; margin-bottom: 14px; font-style: italic; }
+    .suspect p { color: #bfb8ab; font-size: 0.95rem; }
+    .meter { margin-top: 16px; }
+    .meter .bar {
+      height: 6px; background: #2a282e; margin-top: 6px; overflow: hidden;
+    }
+    .meter .fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 1.2s ease;
+    }
+    .meter small { color: var(--muted); font-size: 0.8rem; }
+    .stamp {
+      position: absolute;
+      top: 18px; right: -34px;
+      transform: rotate(35deg);
+      background: #3a0d10;
+      color: #e4a4a7;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      padding: 4px 40px;
+    }
+    .stamp.cleared { background: #1a2a1a; color: #a6d6a6; }
+
+    /* ---------- Письмо ---------- */
+    .letter-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      background: #ece3cf;
+      color: #2a1e12;
+      padding: 50px 60px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: rotate(-0.6deg);
+      background-image: radial-gradient(circle at 20% 10%, rgba(120,80,30,0.12), transparent 40%),
+                        radial-gradient(circle at 80% 90%, rgba(120,80,30,0.15), transparent 45%);
+    }
+    .letter-wrap .handwriting {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 1rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      min-height: 220px;
+    }
+    .letter-wrap .sign {
+      margin-top: 22px;
+      font-family: "Courier New", monospace;
+      font-style: italic;
+    }
+    .letter-controls { text-align: center; margin-top: 30px; }
+    .cursor::after {
+      content: "|";
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ---------- Викторина ---------- */
+    .quiz {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 36px;
+    }
+    .quiz .progress { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
+    .quiz h3 { font-size: 1.35rem; color: #f1ebe0; margin-bottom: 22px; }
+    .options { display: grid; gap: 12px; }
+    .option {
+      text-align: left;
+      background: #101014;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 14px 18px;
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .option:hover:not([disabled]) { border-color: var(--accent-2); }
+    .option.correct { background: #173317; border-color: #3d9a3d; }
+    .option.wrong { background: #3a1214; border-color: var(--accent); }
+    .option[disabled] { cursor: default; }
+    .quiz .explain {
+      margin-top: 18px;
+      color: #bfb8ab;
+      min-height: 48px;
+      font-size: 0.97rem;
+    }
+    .quiz .next-row { margin-top: 18px; text-align: right; }
+    .result { text-align: center; }
+    .result .score { font-size: 3rem; color: var(--accent-2); }
+
+    /* ---------- Футер ---------- */
+    footer {
+      text-align: center;
+      padding: 50px 6%;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+    footer .blood { color: var(--accent); letter-spacing: 6px; margin-bottom: 10px; }
+
+    /* ---------- Адаптив ---------- */
+    @media (max-width: 720px) {
+      nav { flex-direction: column; gap: 10px; }
+      nav ul { justify-content: center; gap: 14px; }
+      .letter-wrap { padding: 30px 24px; }
+      .timeline-card { padding: 24px; }
+      .quiz { padding: 24px; }
+      .stamp { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">J.T.R. 1888</div>
+    <ul>
+      <li><a href="#intro">Введение</a></li>
+      <li><a href="#timeline">Хроника</a></li>
+      <li><a href="#victims">Жертвы</a></li>
+      <li><a href="#map">Карта</a></li>
+      <li><a href="#suspects">Подозреваемые</a></li>
+      <li><a href="#letter">Письмо</a></li>
+      <li><a href="#quiz">Викторина</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="fog f1"></div>
+    <div class="fog f2"></div>
+    <div class="kicker">Лондон · Уайтчепел · 1888</div>
+    <h1>Джек <span>Потрошитель</span></h1>
+    <p class="lead">
+      Одна из самых известных нераскрытых серий убийств в истории. Осенью 1888 года
+      по узким улочкам лондонского Ист-Энда ходил человек, оставивший после себя
+      лишь страх, загадки и вопрос, на который до сих пор нет ответа: кто он был?
+    </p>
+    <a href="#intro" class="btn">Начать расследование</a>
+    <div class="scroll-hint">↓ ПРОКРУТИТЕ ВНИЗ ↓</div>
+  </header>
+
+  <!-- INTRO -->
+  <section id="intro">
+    <h2 class="section-title">Ночь без имени</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Цифры, которые стали отправной точкой для легенды</p>
+
+    <div class="intro-grid">
+      <div class="stat"><span class="num" id="count1">0</span><span class="label">известных жертв</span></div>
+      <div class="stat"><span class="num" id="count2">0</span><span class="label">месяцев активности</span></div>
+      <div class="stat"><span class="num" id="count3">0</span><span class="label">подозреваемых в знаменитом списке</span></div>
+      <div class="stat"><span class="num">∞</span><span class="label">версий и теорий</span></div>
+    </div>
+
+    <div class="prose">
+      <p class="drop">Между 31 августа и 9 ноября 1888 года в районе Уайтчепел были убиты пять женщин. Все они
+      были из бедных слоёв населения и занимались уличной торговлей или проституцией. Убийства отличались
+      жестокостью, и преступник, судя по всему, обладал определёнными медицинскими или анатомическими знаниями.</p>
+      <p>Прозвище «Джек-потрошитель» появилось благодаря письму, отправленному в прессу. Это письмо,
+      подписанное «Dear Boss», считается мистификацией, однако название прижилось и навсегда вошло
+      в массовую культуру: книги, фильмы, сериалы и бесконечные споры историков.</p>
+      <p>Полиция Лондона, включая Скотленд-Ярд, опросила сотни людей, проверила тысячи улик и задержала
+      несколько подозреваемых. Ни одно обвинение так и не было предъявлено. Дело официально осталось нераскрытым.</p>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section id="timeline">
+    <h2 class="section-title">Хроника преступлений</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Выберите дату, чтобы узнать подробности</p>
+
+    <div class="timeline-tabs" id="tabs"></div>
+    <div class="timeline-card" id="timelineCard"></div>
+  </section>
+
+  <!-- VICTIMS -->
+  <section id="victims">
+    <h2 class="section-title">Жертвы</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Нажмите на карточку, чтобы узнать больше о каждой из них</p>
+
+    <div class="victims-grid" id="victimsGrid"></div>
+  </section>
+
+  <!-- MAP -->
+  <section id="map">
+    <h2 class="section-title">Карта преступлений</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Места, где были найдены тела. Наведите или нажмите на точку</p>
+
+    <div class="map-wrap">
+      <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" aria-label="Карта Уайтчепела">
+        <!-- Улицы -->
+        <g stroke="#2c2a30" fill="none" stroke-width="2">
+          <path d="M0 120 Q200 100 400 150 T800 130"/>
+          <path d="M0 260 Q250 240 420 280 T800 300"/>
+          <path d="M0 400 Q300 380 500 420 T800 410"/>
+          <path d="M150 0 Q170 200 140 500"/>
+          <path d="M330 0 Q310 250 360 500"/>
+          <path d="M520 0 Q540 250 500 500"/>
+          <path d="M660 0 Q650 250 690 500" stroke-width="1"/>
+        </g>
+        <!-- Темза -->
+        <path d="M0 470 Q200 440 400 480 T800 460 L800 500 L0 500 Z" fill="#0c1a24" opacity="0.8"/>
+        <text x="30" y="492" fill="#3a4f5e" font-size="14" font-family="Georgia">Темза</text>
+
+        <g class="pin" data-id="0" transform="translate(120,130)">
+          <circle class="ring" r="8"/><circle class="core" r="6"/>
+          <text x="14" y="4" fill="#d8d2c6" font-size="13" font-family="Georgia">Buck's Row</text>
+        </g>
+        <g class="pin" data-id="1" transform="translate(300,230)">
+          <circle class="ring" r="8"/><circle class="core" r="6"/>
+          <text x="14" y="4" fill="#d8d2c6" font-size="13" font-family="Georgia">Hanbury St.</text>
+        </g>
+        <g class="pin" data-id="2" transform="translate(440,350)">
+          <circle class="ring" r="8"/><circle class="core" r="6"/>
+          <text x="14" y="4" fill="#d8d2c6" font-size="13" font-family="Georgia">Berner St.</text>
+        </g>
+        <g class="pin" data-id="3" transform="translate(560,290)">
+          <circle class="ring" r="8"/><circle class="core" r="6"/>
+          <text x="14" y="4" fill="#d8d2c6" font-size="13" font-family="Georgia">Mitre Sq.</text>
+        </g>
+        <g class="pin" data-id="4" transform="translate(640,190)">
+          <circle class="ring" r="8"/><circle class="core" r="6"/>
+          <text x="14" y="4" fill="#d8d2c6" font-size="13" font-family="Georgia">Miller's Ct.</text>
+        </g>
+      </svg>
+    </div>
+    <div class="map-info" id="mapInfo">Выберите точку на карте.</div>
+  </section>
+
+  <!-- SUSPECTS -->
+  <section id="suspects">
+    <h2 class="section-title">Подозреваемые</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Имена, которые историки обсуждают десятилетиями. Шкала показывает, насколько популярна версия среди исследователей — это не доказательство</p>
+
+    <div class="suspects-grid" id="suspectsGrid"></div>
+  </section>
+
+  <!-- LETTER -->
+  <section id="letter">
+    <h2 class="section-title">Письмо «Dear Boss»</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Письмо, отправленное в прессу 25 сентября 1888 года. Нажмите кнопку, чтобы «напечатать» его</p>
+
+    <div class="letter-wrap">
+      <div class="handwriting" id="letterText"></div>
+      <div class="sign" id="letterSign" style="opacity:0"></div>
+    </div>
+    <div class="letter-controls">
+      <button class="btn gold" id="letterBtn">Прочитать письмо</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <h2 class="section-title">Проверьте свои знания</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Пять вопросов о деле. Удачи, детектив</p>
+
+    <div class="quiz" id="quizBox"></div>
+  </section>
+
+  <footer>
+    <div class="blood">✦ ✦ ✦</div>
+    <p>Страница создана в образовательных целях. Личность преступника до сих пор не установлена.</p>
+    <p style="margin-top:8px;">© 1888 / 2026 · Уайтчепел помнит</p>
+  </footer>
+
+<script>
+  /* ---------- Данные ---------- */
+  const timeline = [
+    {
+      date: "31 августа 1888",
+      title: "Мэри Энн Николс · Бакс-Роу",
+      text: "Тело 43-летней Мэри Энн Николс найдено рано утром на Бакс-Роу. Горло перерезано, живот вскрыт. Это первое убийство, которое полиция связала с серией."
+    },
+    {
+      date: "8 сентября 1888",
+      title: "Анни Чэпмен · Ханбери-стрит",
+      text: "На заднем дворе дома на Ханбери-стрит найдено тело 47-летней Анни Чэпмен. Это первое убийство, которое многие исследователи связывают с сериалом, и именно здесь впервые звучат версии о «медицинских» навыках убийцы."
+    },
+    {
+      date: "25 сентября 1888",
+      title: "Письмо в прессу",
+      text: "В Центральное news-агентство приходит письмо, подписанное «Jack the Ripper». Оно содержит жуткие подробности и обещания новых преступлений. Многие эксперты считают его подделкой."
+    },
+    {
+      date: "30 сентября 1888",
+      title: "«Долгая ночь»",
+      text: "За одну ночь совершены два убийства: Элизабет Страйд на Бернер-стрит и Кэтрин Эддоуз на Митр-сквер. Эддоуз, по данным вскрытия, была изуродована особенно жестоко. Ночь получила название «Long Night»."
+    },
+    {
+      date: "9 ноября 1888",
+      title: "Мэри Джейн Келли · Миллерс-корт",
+      text: "Последнее и самое жестокое из убийств. Мэри Джейн Келли, около 25 лет, была убита в своей комнате на Миллерс-корт. Из-за обстановки преступления полиция смогла лишь приблизительно установить время смерти."
+    }
+  ];
+
+  const victims = [
+    { name: "Мэри Энн Николс", initials: "MN", age: "43 года", date: "31 августа 1888", info: "Работала на улице, жила в ночлежках. Часто называлась «Полли». Была последней, кого видели живой в доме, где она ночевала, — за несколько часов до гибели." },
+    { name: "Анни Чэпмен", initials: "AC", age: "47 лет", date: "8 сентября 1888", info: "Страдала от болезни и алкоголизма. Перед смертью работала по найму и пыталась заработать на ночлег. Её последние дни описаны в показаниях соседей и знакомых." },
+    { name: "Элизабет Страйд", initials: "ES", age: "44 года", date: "30 сентября 1888", info: "Была найдена у входа во двор на Бернер-стрит. Возможно, убийца был прерван — есть версии о шуме и людях поблизости. Её смерть часто считается «неполной» частью серии." },
+    { name: "Кэтрин Эддоуз", initials: "KE", age: "46 лет", date: "30 сентября 1888", info: "Убита на Митр-сквер примерно через час после Страйд. Её тело было изуродовано сильнее всех предыдущих жертв. Часть её фартука была найдена на улице неподалёку." },
+    { name: "Мэри Джейн Келли", initials: "MK", age: "около 25 лет", date: "9 ноября 1888", info: "Последняя из пяти «канонических» жертв. Убита в собственной комнате. Из-за тяжести преступления и отсутствия фотографий тела детали до сих пор вызывают споры." }
+  ];
+
+  const suspects = [
+    { name: "Монтегю Джон Дрюитт", role: "Адвокат и учитель, Лондон", text: "Юрист и учитель крикета. Покончил с собой в конце 1888 года. Полиция в частных записях называла его одним из подозреваемых.", pop: 45 },
+    { name: "Аарон Косминский", role: "Парикмахер, польский эмигрант", text: "Психически нестабильный мужчина, помещённый в лечебницу. Свидетель опознал его, но опознание не было подтверждено в суде.", pop: 70 },
+    { name: "Майкл Остроги", role: "Вор и мошенник", text: "Известный преступник, которого иногда связывают с Ист-Эндом 1888 года. Доказательств его причастности не найдено.", pop: 25 },
+    { name: "Фрэнсис Таммети", role: "Американский врач-шарлатан", text: "Предприниматель, интересовавшийся хирургией. Был арестован в Лондоне в ноябре 1888 года, но позже оправдан по обвинению в связанных преступлениях.", pop: 30, cleared: false },
+    { name: "Джеймс Мейбрик", role: "Торговец из Ливерпуля", text: "Фигура, появившаяся благодаря «дневнику Мейбрика», который оказался подделкой 1990-х. Версия с ним считается мистификацией.", pop: 10 },
+    { name: "Уолтер Сикерт", role: "Художник", text: "Известный живописец, которому приписывают авторство «Dear Boss». Теория популярна в книгах, но прямых улик нет.", pop: 35 }
+  ];
+
+  const mapData = [
+    "<strong>Бакс-Роу</strong> · Мэри Энн Николс · 31 августа 1888. Тихая улочка, где тело нашли практически на проезжей части.",
+    "<strong>Ханбери-стрит</strong> · Анни Чэпмен · 8 сентября 1888. Тело найдено во дворе дома, рядом с домом жильцов.",
+    "<strong>Бернер-стрит</strong> · Элизабет Страйд · 30 сентября 1888. Тело найдено у ворот двора, где проходил клуб.",
+    "<strong>Митр-сквер</strong> · Кэтрин Эддоуз · 30 сентября 1888. Тело найдено в углу площади, менее чем через час после Страйд.",
+    "<strong>Миллерс-корт</strong> · Мэри Джейн Келли · 9 ноября 1888. Единственное убийство, совершённое в закрытом помещении."
+  ];
+
+  const quizData = [
+    { q: "В каком районе Лондона происходили убийства?", options: ["Вестминстер", "Уайтчепел", "Сохо", "Камден"], correct: 1, explain: "Все пять «канонических» убийств произошли в районе Уайтчепел в Ист-Энде." },
+    { q: "Сколько «канонических» жертв насчитывают в серии?", options: ["3", "4", "5", "7"], correct: 2, explain: "Обычно выделяют пять жертв: Николс, Чэпмен, Страйд, Эддоуз и Келли." },
+    { q: "Какое событие получило название «Long Night»?", options: ["Пожар в доме", "Два убийства за одну ночь 30 сентября", "Первое письмо в прессу", "Арест подозреваемого"], correct: 1, explain: "В ночь на 30 сентября 1888 года произошли убийства Страйд и Эддоуз." },
+    { q: "Кто из этих людей был в списке подозреваемых?", options: ["Чарльз Дарвин", "Аарон Косминский", "Оскар Уайльд", "Артур Конан Дойл"], correct: 1, explain: "Аарон Косминский — один из самых известных подозреваемых, хотя его вина не доказана." },
+    { q: "Было ли преступник официально опознан и осуждён?", options: ["Да, в 1889 году", "Да, в 1900 году", "Нет, дело официально не раскрыто", "Да, в 1910 году"], correct: 2, explain: "Личность убийцы так и не была установлена, а дело официально осталось нераскрытым." }
+  ];
+
+  /* ---------- Счётчики ---------- */
+  function animateCount(el, target, duration = 1600) {
+    const start = performance.now();
+    function frame(now) {
+      const p = Math.min((now - start) / duration, 1);
+      el.textContent = Math.floor(p * target);
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCount(document.getElementById('count1'), 5);
+        animateCount(document.getElementById('count2'), 3);
+        animateCount(document.getElementById('count3'), suspects.length);
+        counterObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.4 });
+  counterObserver.observe(document.getElementById('intro'));
+
+  /* ---------- Таймлайн ---------- */
+  const tabsEl = document.getElementById('tabs');
+  const cardEl = document.getElementById('timelineCard');
+
+  function renderTimeline(index) {
+    const item = timeline[index];
+    cardEl.innerHTML = `
+      <div class="date">${item.date}</div>
+      <h3>${item.title}</h3>
+      <p>${item.text}</p>`;
+    [...tabsEl.children].forEach((btn, i) => btn.classList.toggle('active', i === index));
+  }
+
+  timeline.forEach((item, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab';
+    btn.textContent = item.date.split(' ').slice(0, 2).join(' ');
+    btn.addEventListener('click', () => renderTimeline(i));
+    tabsEl.appendChild(btn);
+  });
+  renderTimeline(0);
+
+  /* ---------- Жертвы ---------- */
+  const victimsGrid = document.getElementById('victimsGrid');
+  victims.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'victim';
+    card.innerHTML = `
+      <div class="initials">${v.initials}</div>
+      <h3>${v.name}</h3>
+      <div class="meta">${v.age} · ${v.date}</div>
+      <div class="hint">Подробнее ▾</div>
+      <div class="details">${v.info}</div>`;
+    card.addEventListener('click', () => {
+      card.classList.toggle('open');
+      card.querySelector('.hint').textContent = card.classList.contains('open') ? 'Свернуть ▴' : 'Подробнее ▾';
+    });
+    victimsGrid.appendChild(card);
+  });
+
+  /* ---------- Карта ---------- */
+  const mapInfo = document.getElementById('mapInfo');
+  const pins = document.querySelectorAll('.pin');
+  pins.forEach(pin => {
+    const id = Number(pin.dataset.id);
+    pin.addEventListener('mouseenter', () => { mapInfo.innerHTML = mapData[id]; });
+    pin.addEventListener('click', () => {
+      pins.forEach(p => p.querySelector('.core').setAttribute('r', 6));
+      pin.querySelector('.core').setAttribute('r', 8);
+      mapInfo.innerHTML = mapData[id];
+    });
+  });
+
+  /* ---------- Подозреваемые ---------- */
+  const suspectsGrid = document.getElementById('suspectsGrid');
+  suspects.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'suspect';
+    el.innerHTML = `
+      <h3>${s.name}</h3>
+      <div class="role">${s.role}</div>
+      <p>${s.text}</p>
+      <div class="meter">
+        <small>Популярность версии: ${s.pop}%</small>
+        <div class="bar"><div class="fill" data-width="${s.pop}"></div></div>
+      </div>
+      <div class="stamp">НЕ ДОКАЗАНО</div>`;
+    suspectsGrid.appendChild(el);
+  });
+
+  const fillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.fill').forEach(f => f.style.width = f.dataset.width + '%');
+        fillObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.suspect').forEach(s => fillObserver.observe(s));
+
+  /* ---------- Письмо ---------- */
+  const letterText = `Dear Boss,
+
+I keep on hearing the police have caught me but they won't fix me just yet. I have laughed when they look so clever and talk about being on the right track. That joke about Jack the Ripper is my favourite.
+
+Yours truly,
+Jack the Ripper`;
+  const letterEl = document.getElementById('letterText');
+  const signEl = document.getElementById('letterSign');
+  const letterBtn = document.getElementById('letterBtn');
+  let typing = false;
+
+  letterBtn.addEventListener('click', () => {
+    if (typing) return;
+    typing = true;
+    letterEl.textContent = '';
+    signEl.style.opacity = 0;
+    letterEl.classList.add('cursor');
+    letterBtn.disabled = true;
+    let i = 0;
+    const timer = setInterval(() => {
+      letterEl.textContent += letterText[i];
+      i++;
+      if (i >= letterText.length) {
+        clearInterval(timer);
+        letterEl.classList.remove('cursor');
+        signEl.textContent = '— Jack the Ripper';
+        signEl.style.opacity = 1;
+        signEl.style.transition = 'opacity 1s';
+        letterBtn.disabled = false;
+        letterBtn.textContent = 'Прочитать снова';
+        typing = false;
+      }
+    }, 45);
+  });
+
+  /* ---------- Викторина ---------- */
+  const quizBox = document.getElementById('quizBox');
+  let qIndex = 0;
+  let score = 0;
+
+  function renderQuestion() {
+    const q = quizData[qIndex];
+    quizBox.innerHTML = `
+      <div class="progress">Вопрос ${qIndex + 1} из ${quizData.length}</div>
+      <h3>${q.q}</h3>
+      <div class="options">
+        ${q.options.map((o, i) => `<button class="option" data-i="${i}">${o}</button>`).join('')}
+      </div>
+      <div class="explain"></div>
+      <div class="next-row"></div>`;
+
+    quizBox.querySelectorAll('.option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const chosen = Number(btn.dataset.i);
+        const buttons = quizBox.querySelectorAll('.option');
+        buttons.forEach(b => b.disabled = true);
+        if (chosen === q.correct) {
+          btn.classList.add('correct');
+          score++;
+        } else {
+          btn.classList.add('wrong');
+          buttons[q.correct].classList.add('correct');
+        }
+        quizBox.querySelector('.explain').textContent = q.explain;
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn gold';
+        nextBtn.textContent = qIndex < quizData.length - 1 ? 'Далее →' : 'Результат';
+        nextBtn.addEventListener('click', () => {
+          qIndex++;
+          if (qIndex < quizData.length) renderQuestion();
+          else renderResult();
+        });
+        quizBox.querySelector('.next-row').appendChild(nextBtn);
+      });
+    });
+  }
+
+  function renderResult() {
+    let verdict;
+    if (score === quizData.length) verdict = "Безупречно. Скотленд-Ярд взял бы вас на службу.";
+    else if (score >= 3) verdict = "Хороший результат. Вы почти настоящий детектив.";
+    else verdict = "Дело остаётся открытым. Попробуйте ещё раз.";
+
+    quizBox.innerHTML = `
+      <div class="result">
+        <div class="score">${score} / ${quizData.length}</div>
+        <p style="margin:14px 0 24px;">${verdict}</p>
+        <button class="btn gold" id="restartQuiz">Пройти заново</button>
+      </div>`;
+    document.getElementById('restartQuiz').addEventListener('click', () => {
+      qIndex = 0;
+      score = 0;
+      renderQuestion();
+    });
+  }
+
+  renderQuestion();
+</script>
+</body>
+</html>
